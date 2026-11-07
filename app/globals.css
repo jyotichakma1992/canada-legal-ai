@@ -1,0 +1,162 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --color-navy: #0c2340;
+  --color-ink: #17233a;
+  --color-accent: #1e4e8c;
+  --color-mist: #f4f7fb;
+  --color-line: #e3e8f0;
+  --color-muted: #4a5a70;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: #ffffff;
+  color: var(--color-ink);
+}
+
+.page-prose h2 {
+  margin-top: 1.75rem;
+  margin-bottom: 0.4rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-navy);
+}
+
+.page-prose p,
+.page-prose li {
+  margin-top: 0.7rem;
+  line-height: 1.7;
+  color: var(--color-ink);
+}
+
+.page-prose ul {
+  margin-top: 0.4rem;
+  margin-left: 1.15rem;
+  list-style: disc;
+}
+
+.page-prose a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.jurisdiction-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5 10 12.5 15 7.5' stroke='%230c2340' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+}
+
+.legal-answer {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+}
+
+.legal-answer h2 {
+  margin-top: 1.35rem;
+  margin-bottom: 0.35rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--color-navy);
+}
+
+.legal-answer h2:first-child {
+  margin-top: 0;
+}
+
+.legal-answer h3 {
+  margin-top: 1rem;
+  margin-bottom: 0.3rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-navy);
+}
+
+.legal-answer p {
+  margin: 0.55rem 0;
+}
+
+.legal-answer ul,
+.legal-answer ol {
+  margin: 0.45rem 0 0.45rem 1.2rem;
+}
+
+.legal-answer ul {
+  list-style: disc;
+}
+
+.legal-answer ol {
+  list-style: decimal;
+}
+
+.legal-answer li {
+  margin: 0.25rem 0;
+}
+
+.legal-answer a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.legal-answer strong {
+  font-weight: 600;
+  color: var(--color-navy);
+}
+
+.legal-answer pre {
+  margin: 0.7rem 0;
+  overflow-x: auto;
+  border-radius: 0.75rem;
+  background: var(--color-mist);
+  padding: 0.75rem 1rem;
+  font-size: 0.92em;
+}
+
+.legal-answer code {
+  font-size: 0.92em;
+}
+
+.thinking-dot {
+  animation: thinking-bounce 1s infinite;
+}
+
+.thinking-dot:nth-child(2) {
+  animation-delay: 150ms;
+}
+
+.thinking-dot:nth-child(3) {
+  animation-delay: 300ms;
+}
+
+@keyframes thinking-bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  40% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thinking-dot {
+    animation: none;
+    opacity: 1;
+  }
+}
