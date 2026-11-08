@@ -30,7 +30,7 @@ export function SiteFooter() {
               {link.label}
             </Link>
           ))}
-        </nav> className="mt-4">
+        </nav>
           <p className="text-sm font-semibold text-navy">{t.allOfCanada}</p>
           <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
             {PROVINCE_GUIDES.map((guide) => (
