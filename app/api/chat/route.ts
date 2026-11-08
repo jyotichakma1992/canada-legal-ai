@@ -378,8 +378,6 @@ function failureResponse(failure: GeminiFailure) {
 }
 
 export async function POST(request: Request) {
-  if (identity instanceof Response) {
-  }
 
   if (!(await allowRequest(clientKey(request)))) {
     return jsonError(
