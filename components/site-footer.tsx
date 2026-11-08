@@ -31,20 +31,6 @@ export function SiteFooter() {
             </Link>
           ))}
         </nav>
-          <p className="text-sm font-semibold text-navy">{t.allOfCanada}</p>
-          <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
-            {PROVINCE_GUIDES.map((guide) => (
-              <li key={guide.id}>
-                <Link
-                  href={`/${guide.slug}`}
-                  className="text-sm text-accent underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                >
-                  {placeName(guide.id, lang)}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
         <p className="mt-4 text-[13px] leading-relaxed text-muted">{t.footerNote}</p>
       </div>
     </footer>
