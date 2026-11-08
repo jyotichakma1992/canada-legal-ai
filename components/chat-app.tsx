@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -12,7 +11,6 @@ import {
   JURISDICTIONS,
   type JurisdictionId,
 } from "@/lib/jurisdictions";
-import { PROVINCE_GUIDES } from "@/lib/provinces";
 import { placeName, translateError } from "@/lib/ui";
 import type { ChatMessage } from "@/lib/validate";
 
@@ -341,21 +339,6 @@ export function ChatApp({
                 </li>
               ))}
             </ul>
-            <nav aria-label={t.allOfCanada} className="mt-6">
-              <h2 className="text-sm font-semibold text-navy">{t.allOfCanada}</h2>
-              <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
-                {PROVINCE_GUIDES.map((guide) => (
-                  <li key={guide.id}>
-                    <Link
-                      href={`/${guide.slug}`}
-                      className="text-sm text-accent underline underline-offset-2"
-                    >
-                      {placeName(guide.id, lang)}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
           </section>
         </>
       ) : null}
