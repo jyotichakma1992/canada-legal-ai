@@ -3,11 +3,9 @@
 import Link from "next/link";
 
 import { useLanguage } from "@/components/language-provider";
-import { PROVINCE_GUIDES } from "@/lib/provinces";
-import { placeName } from "@/lib/ui";
 
 export function SiteFooter() {
-  const { lang, t } = useLanguage();
+  const { t } = useLanguage();
   const links = [
     { href: "/", label: t.home },
     { href: "/about", label: t.about },
@@ -32,8 +30,7 @@ export function SiteFooter() {
               {link.label}
             </Link>
           ))}
-        </nav>
-        <nav aria-label={t.allOfCanada} className="mt-4">
+        </nav> className="mt-4">
           <p className="text-sm font-semibold text-navy">{t.allOfCanada}</p>
           <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
             {PROVINCE_GUIDES.map((guide) => (
