@@ -10,9 +10,9 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 // gemini-2.5-flash is limited to keys that already used it, and shuts down on
-// 2026-12-01. gemini-2.5-flash-lite is the current Flash model with no shutdown
+// 2026-12-01. gemini-3.5-flash-lite is the current Flash model with no shutdown
 // date. The body is systemInstruction plus contents only.
-const MODEL = "gemini-2.5-flash-lite";
+const MODEL = "gemini-3.5-flash-lite";
 const MAX_BODY_BYTES = 256_000;
 const GEMINI_ORIGIN = "https://generativelanguage.googleapis.com/v1beta";
 
