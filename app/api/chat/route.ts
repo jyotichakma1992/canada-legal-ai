@@ -4,6 +4,7 @@ import { jurisdictionById } from "@/lib/jurisdictions";
 import { buildSystemPrompt } from "@/lib/prompt";
 import { placeName } from "@/lib/ui";
 import { allowRequest, clientKey } from "@/lib/rate-limit";
+import type { Lang } from "@/lib/language";
 import { parseChatRequest, type ChatMessage } from "@/lib/validate";
 
 export const runtime = "nodejs";
@@ -119,6 +120,18 @@ async function readLimitedBody(request: Request): Promise<
   }
 
   return { ok: true, text: new TextDecoder().decode(body) };
+}
+
+function withAnswerLanguage(messages: ChatMessage[], lang: Lang): ChatMessage[] {
+  const note =
+    lang === "fr"
+      ? "Réponds entièrement en français. Tous les titres et toutes les phrases doivent être en français."
+      : "Reply entirely in English. Every heading and every sentence must be in English.";
+  const lastUser = messages.findLastIndex((message) => message.role === "user");
+  if (lastUser < 0) return messages;
+  return messages.map((message, index) =>
+    index === lastUser ? { ...message, content: `${message.content}\n\n${note}` } : message,
+  );
 }
 
 function toGeminiContents(messages: ChatMessage[]) {
@@ -432,7 +445,7 @@ export async function POST(request: Request) {
     const result = await callGemini(
       apiKey,
       buildSystemPrompt(placeName(jurisdiction.id, parsed.value.lang), parsed.value.lang === "fr"),
-      parsed.value.messages,
+      withAnswerLanguage(parsed.value.messages, parsed.value.lang),
     );
 
     if (!result.ok) return failureResponse(result);

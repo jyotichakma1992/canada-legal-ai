@@ -151,3 +151,13 @@ export function areasFor(lang: "en" | "fr"): readonly LawArea[] {
 export function examplesFor(lang: "en" | "fr"): string[] {
   return questionsFor(areasFor(lang));
 }
+
+/** Known example and topic questions have a French and an English version. */
+export function questionInLang(text: string, lang: "en" | "fr"): string {
+  const trimmed = text.trim();
+  const source = lang === "fr" ? LAW_AREAS : LAW_AREAS_FR;
+  const target = lang === "fr" ? LAW_AREAS_FR : LAW_AREAS;
+  const match = source.find((area) => area.question === trimmed);
+  if (!match) return text;
+  return target.find((area) => area.id === match.id)?.question ?? text;
+}

@@ -5,7 +5,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { useLanguage } from "@/components/language-provider";
-import { areasFor, examplesFor } from "@/lib/areas";
+import { areasFor, examplesFor, questionInLang } from "@/lib/areas";
+import type { Lang } from "@/lib/language";
 import {
   DEFAULT_JURISDICTION,
   JURISDICTIONS,
@@ -34,6 +35,12 @@ export function ChatApp({
   const listId = useId();
   const areas = areasFor(lang);
   const examples = examplesFor(lang);
+  const requestSeq = useRef(0);
+  const langRef = useRef(lang);
+  const messagesRef = useRef(messages);
+  const jurisdictionRef = useRef(jurisdiction);
+  messagesRef.current = messages;
+  jurisdictionRef.current = jurisdiction;
 
   useEffect(() => {
     try {
@@ -60,69 +67,128 @@ export function ChatApp({
     field.style.overflowY = next >= 220 ? "auto" : "hidden";
   }, [draft]);
 
-  async function requestAnswer(nextMessages: ChatMessage[]) {
+  async function fetchAnswer(
+    nextMessages: ChatMessage[],
+    answerLang: Lang,
+    seq: number,
+  ): Promise<ChatMessage | null> {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jurisdiction: jurisdictionRef.current,
+        lang: answerLang,
+        messages: nextMessages,
+      }),
+    });
+    if (requestSeq.current !== seq) return null;
+
+    const payload: unknown = await response.json().catch(() => null);
+    const answer =
+      payload &&
+      typeof payload === "object" &&
+      "answer" in payload &&
+      typeof payload.answer === "string"
+        ? payload.answer
+        : null;
+    const thoughtSignature =
+      payload &&
+      typeof payload === "object" &&
+      "thoughtSignature" in payload &&
+      typeof payload.thoughtSignature === "string" &&
+      payload.thoughtSignature.length > 0 &&
+      payload.thoughtSignature.length <= 16_000
+        ? payload.thoughtSignature
+        : undefined;
+    const serverError =
+      payload &&
+      typeof payload === "object" &&
+      "error" in payload &&
+      typeof payload.error === "string"
+        ? payload.error
+        : null;
+
+    if (!response.ok || !answer) {
+      setError(
+        serverError ?? `The chat service returned HTTP ${response.status} with no error message.`,
+      );
+      return null;
+    }
+
+    return {
+      role: "assistant",
+      content: answer,
+      ...(thoughtSignature ? { thoughtSignature } : {}),
+    };
+  }
+
+  async function requestAnswer(nextMessages: ChatMessage[], answerLang: Lang) {
+    const seq = ++requestSeq.current;
     setMessages(nextMessages);
     setError(null);
     setLoading(true);
 
     try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          jurisdiction,
-          lang,
-          messages: nextMessages,
-        }),
-      });
-
-      const payload: unknown = await response.json().catch(() => null);
-      const answer =
-        payload &&
-        typeof payload === "object" &&
-        "answer" in payload &&
-        typeof payload.answer === "string"
-          ? payload.answer
-          : null;
-      const thoughtSignature =
-        payload &&
-        typeof payload === "object" &&
-        "thoughtSignature" in payload &&
-        typeof payload.thoughtSignature === "string" &&
-        payload.thoughtSignature.length > 0 &&
-        payload.thoughtSignature.length <= 16_000
-          ? payload.thoughtSignature
-          : undefined;
-      const serverError =
-        payload &&
-        typeof payload === "object" &&
-        "error" in payload &&
-        typeof payload.error === "string"
-          ? payload.error
-          : null;
-
-      if (!response.ok || !answer) {
-        setError(
-            (serverError ??
-              `The chat service returned HTTP ${response.status} with no error message.`),
-        );
-        return;
-      }
-
-      setMessages([
-        ...nextMessages,
-        {
-          role: "assistant",
-          content: answer,
-          ...(thoughtSignature ? { thoughtSignature } : {}),
-        },
-      ]);
+      const reply = await fetchAnswer(nextMessages, answerLang, seq);
+      if (requestSeq.current !== seq || !reply) return;
+      setMessages([...nextMessages, reply]);
     } catch {
-      setError("You appear to be offline, or the server could not be reached.");
+      if (requestSeq.current === seq) {
+        setError("You appear to be offline, or the server could not be reached.");
+      }
     } finally {
-      setLoading(false);
+      if (requestSeq.current === seq) setLoading(false);
     }
   }
+
+  useEffect(() => {
+    const previous = langRef.current;
+    if (previous === lang) return;
+    langRef.current = lang;
+    setDraft((current) => questionInLang(current, lang));
+
+    const users = messagesRef.current
+      .filter((message) => message.role === "user")
+      .map((message) => ({
+        role: "user" as const,
+        content: questionInLang(message.content, lang),
+      }));
+    if (users.length === 0) return;
+
+    const seq = ++requestSeq.current;
+    const answerLang = lang;
+    const snapshot = messagesRef.current;
+    let history: ChatMessage[] = [];
+
+    async function rewrite() {
+      setError(null);
+      setLoading(true);
+      try {
+        for (const user of users) {
+          if (requestSeq.current !== seq) return;
+          history = [...history, user];
+          setMessages(history);
+          const reply = await fetchAnswer(history, answerLang, seq);
+          if (requestSeq.current !== seq) return;
+          if (!reply) {
+            setMessages(snapshot);
+            return;
+          }
+          history = [...history, reply];
+          setMessages(history);
+        }
+      } catch {
+        if (requestSeq.current === seq) {
+          setMessages(snapshot);
+          setError("You appear to be offline, or the server could not be reached.");
+        }
+      } finally {
+        if (requestSeq.current === seq) setLoading(false);
+      }
+    }
+
+    void rewrite();
+  }, [lang]);
 
   function sendQuestion(text: string) {
     const question = text.trim();
@@ -133,13 +199,13 @@ export function ChatApp({
     }
 
     setDraft("");
-    void requestAnswer([...messages, { role: "user", content: question }]);
+    void requestAnswer([...messages, { role: "user", content: question }], lang);
   }
 
   function retry() {
     const last = messages[messages.length - 1];
     if (!last || last.role !== "user" || loading) return;
-    void requestAnswer(messages);
+    void requestAnswer(messages, lang);
   }
 
   function resetChat() {
