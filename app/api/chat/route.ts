@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 
-import { requireIdentity } from "../../../cursor/identity";
 import { jurisdictionById } from "@/lib/jurisdictions";
 import { buildSystemPrompt } from "@/lib/prompt";
 import { allowRequest, clientKey } from "@/lib/rate-limit";
@@ -379,13 +378,7 @@ function failureResponse(failure: GeminiFailure) {
 }
 
 export async function POST(request: Request) {
-  // The published app is private. Gemini runs only after Cursor verifies the
-  // caller. An anonymous request is a 401 and never reaches the paid API.
-  const identity = await requireIdentity(request);
   if (identity instanceof Response) {
-    const headers = new Headers(identity.headers);
-    headers.set("Cache-Control", "private, no-store");
-    return new Response(identity.body, { status: identity.status, headers });
   }
 
   if (!(await allowRequest(clientKey(request)))) {

@@ -109,8 +109,6 @@ export function ChatApp({
 
       if (!response.ok || !answer) {
         setError(
-          serverError === "unauthorized"
-            ? "Sign in to ask a question."
             : (serverError ??
               `The chat service returned HTTP ${response.status} with no error message.`),
         );
