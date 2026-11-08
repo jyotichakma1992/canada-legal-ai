@@ -109,7 +109,7 @@ export function ChatApp({
 
       if (!response.ok || !answer) {
         setError(
-            : (serverError ??
+            (serverError ??
               `The chat service returned HTTP ${response.status} with no error message.`),
         );
         return;
