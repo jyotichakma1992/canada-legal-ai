@@ -23,7 +23,7 @@ export function AboutView() {
         </p>
         <h2>Pourquoi les gens s'en servent</h2>
         <ul>
-          <li>L'explication est en langage clair.</li>
+          <li>L'explication suit la langue que vous choisissez, le français ou l'anglais.</li>
           <li>
             Elle suit la province ou le territoire que vous choisissez, et elle dit quand une règle
             fédérale s'applique.
@@ -64,7 +64,7 @@ export function AboutView() {
       </p>
       <h2>Why people use this</h2>
       <ul>
-        <li>The explanation is in plain English.</li>
+        <li>The explanation follows the language you choose, English or French.</li>
         <li>It follows the province or territory you select, and it says when a federal rule applies.</li>
         <li>It names a source when it can, and it admits when it cannot.</li>
         <li>It is information. It is not a lawyer, and it does not represent you.</li>

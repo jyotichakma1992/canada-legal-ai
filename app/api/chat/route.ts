@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { jurisdictionById } from "@/lib/jurisdictions";
 import { buildSystemPrompt } from "@/lib/prompt";
+import { placeName } from "@/lib/ui";
 import { allowRequest, clientKey } from "@/lib/rate-limit";
 import { parseChatRequest, type ChatMessage } from "@/lib/validate";
 
@@ -430,7 +431,7 @@ export async function POST(request: Request) {
   try {
     const result = await callGemini(
       apiKey,
-      buildSystemPrompt(jurisdiction.label, jurisdiction.id === "QC"),
+      buildSystemPrompt(placeName(jurisdiction.id, parsed.value.lang), parsed.value.lang === "fr"),
       parsed.value.messages,
     );
 

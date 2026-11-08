@@ -137,7 +137,7 @@ function frenchGuide(province: ProvinceGuide, showFederalLink: boolean): GuideVi
           "Le Québec utilise le droit civil pour de nombreuses affaires privées, dont une grande partie du patrimoine familial, du logement, des testaments et des contrats. Les autres provinces utilisent la common law pour ces sujets.",
           "Le Québec établit aussi de nombreuses règles sur la conduite, les achats des consommateurs, la plupart des milieux de travail et les infractions provinciales. Les prestations peuvent être provinciales ou fédérales.",
           "Le droit fédéral s'applique aussi au Québec. Le droit criminel et l'immigration sont fédéraux. Certains milieux de travail sont de compétence fédérale.",
-          "Lorsque le Québec est choisi, la conversation répond en français. Pour les autres provinces, territoires et questions pancanadiennes, elle répond en anglais. Elle le dit lorsqu'elle ne peut pas vérifier une source. Consultez LégisQuébec et le site fédéral Justice Laws.",
+          "La conversation répond dans la langue que vous choisissez, en français ou en anglais, y compris lorsque le Québec est sélectionné. Elle le dit lorsqu'elle ne peut pas vérifier une source. Consultez LégisQuébec et le site fédéral Justice Laws.",
         ]
       : [
           `${place.name} établit une grande partie des règles sur le logement, la plupart des milieux de travail, les ventes aux consommateurs, la conduite, les testaments et les infractions ${level}s.`,

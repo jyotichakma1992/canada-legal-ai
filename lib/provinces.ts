@@ -67,7 +67,7 @@ export const PROVINCE_GUIDES: ProvinceGuide[] = [
       "Quebec uses civil law for many private matters, including a large part of family property, housing, wills, and contracts. The other provinces use common law for those subjects.",
       "Quebec also sets many rules for driving, consumer purchases, most workplaces, and provincial offences. Benefits can be provincial or federal.",
       "Federal law still applies in Quebec. Criminal law and immigration are federal. Some workplaces are federally regulated.",
-      "When Quebec is selected, the chat answers in French. For every other province, territory, or a Canada-wide question, it answers in English. It says so when it cannot verify a source. Check LégisQuébec and the federal Justice Laws website.",
+      "The chat answers in the language you choose, English or French, including when Quebec is selected. It says so when it cannot verify a source. Check LégisQuébec and the federal Justice Laws website.",
     ],
     officialName: "LégisQuébec",
     officialUrl: "https://www.legisquebec.gouv.qc.ca",

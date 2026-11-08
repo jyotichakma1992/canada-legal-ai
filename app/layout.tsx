@@ -5,7 +5,7 @@ import { LanguageProvider } from "@/components/language-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { SITE_NAME, TAGLINE } from "@/lib/copy";
-import { getInitialChatJurisdiction, getLockedLang, getRequestLang } from "@/lib/request-lang";
+import { getRequestLang } from "@/lib/request-lang";
 import { ui } from "@/lib/ui";
 
 import "./globals.css";
@@ -52,14 +52,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const lang = await getRequestLang();
-  const locked = await getLockedLang();
-  const initialChatJurisdiction = await getInitialChatJurisdiction();
   const copy = ui(lang);
 
   return (
     <html lang={lang === "fr" ? "fr-CA" : "en-CA"} className={`${sourceSans.variable} ${newsreader.variable}`}>
       <body className="font-sans antialiased">
-        <LanguageProvider locked={locked} initialChatJurisdiction={initialChatJurisdiction}>
+        <LanguageProvider initialLang={lang}>
           <div className="flex min-h-dvh flex-col bg-white">
             <div className="h-0.5 shrink-0 bg-navy" />
             <SiteHeader />

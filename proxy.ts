@@ -37,14 +37,6 @@ export function proxy(request: NextRequest) {
   const csp = buildContentSecurityPolicy(nonce);
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("content-security-policy", csp);
-  requestHeaders.set("x-pathname", request.nextUrl.pathname);
-  const jurisdiction = request.nextUrl.searchParams.get("jurisdiction");
-  if (jurisdiction && /^[A-Z]{2}$/.test(jurisdiction)) {
-    requestHeaders.set("x-cla-jurisdiction", jurisdiction);
-  } else {
-    requestHeaders.delete("x-cla-jurisdiction");
-  }
-
   const response = NextResponse.next({
     request: { headers: requestHeaders },
   });

@@ -54,6 +54,7 @@ const ERRORS_FR: Record<string, string> = {
     "Le service d'IA a renvoyé une réponse vide. Veuillez réessayer.",
   "Choose a province, territory, or Federal / Canada-wide.":
     "Choisissez une province, un territoire ou Fédéral / partout au Canada.",
+  "Choose English or French.": "Choisissez le français ou l'anglais.",
   "Type a question to continue.": "Écrivez une question pour continuer.",
   "That message could not be read.": "Ce message n'a pas pu être lu.",
   "That message is too long. Try a shorter question.":

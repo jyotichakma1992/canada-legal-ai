@@ -21,7 +21,7 @@ export function ChatApp({
 }: {
   initialJurisdiction?: JurisdictionId;
 }) {
-  const { lang, t, setChatJurisdiction } = useLanguage();
+  const { lang, t } = useLanguage();
   const [jurisdiction, setJurisdiction] = useState<JurisdictionId>(
     initialJurisdiction ?? DEFAULT_JURISDICTION,
   );
@@ -34,11 +34,6 @@ export function ChatApp({
   const listId = useId();
   const areas = areasFor(lang);
   const examples = examplesFor(lang);
-
-  useEffect(() => {
-    setChatJurisdiction(jurisdiction);
-    return () => setChatJurisdiction(null);
-  }, [jurisdiction, setChatJurisdiction]);
 
   useEffect(() => {
     try {
@@ -76,6 +71,7 @@ export function ChatApp({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           jurisdiction,
+          lang,
           messages: nextMessages,
         }),
       });
@@ -181,9 +177,7 @@ export function ChatApp({
               onChange={(event) => {
                 const next = event.target.value;
                 if (JURISDICTIONS.some((item) => item.id === next)) {
-                  const id = next as JurisdictionId;
-                  setJurisdiction(id);
-                  setChatJurisdiction(id);
+                  setJurisdiction(next as JurisdictionId);
                 }
               }}
               className="jurisdiction-select mt-2 h-12 w-full appearance-none rounded-lg border border-line bg-white px-3 pr-10 text-base text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"

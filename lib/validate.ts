@@ -1,4 +1,5 @@
 import { isJurisdictionId, type JurisdictionId } from "@/lib/jurisdictions";
+import { isLang, type Lang } from "@/lib/language";
 
 export type ChatRole = "user" | "assistant";
 
@@ -10,13 +11,14 @@ export type ChatMessage = {
 
 export type ChatRequest = {
   jurisdiction: JurisdictionId;
+  lang: Lang;
   messages: ChatMessage[];
 };
 
 const MAX_MESSAGES = 20;
 const MAX_USER_CHARS = 4000;
 const MAX_ASSISTANT_CHARS = 12000;
-const BODY_KEYS = new Set(["jurisdiction", "messages"]);
+const BODY_KEYS = new Set(["jurisdiction", "lang", "messages"]);
 const MESSAGE_KEYS = new Set(["role", "content", "thoughtSignature"]);
 const MAX_SIGNATURE_CHARS = 16_000;
 
@@ -37,10 +39,15 @@ export function parseChatRequest(
     };
   }
 
+  const lang = input.lang;
+  if (typeof lang !== "string" || !isLang(lang)) {
+    return { ok: false, error: "Choose English or French." };
+  }
+
   const parsed = parseMessages(input.messages, { requireUserEnding: true });
   if (!parsed.ok) return parsed;
 
-  return { ok: true, value: { jurisdiction, messages: parsed.messages } };
+  return { ok: true, value: { jurisdiction, lang, messages: parsed.messages } };
 }
 
 function isPlainObject(input: unknown): input is Record<string, unknown> {
