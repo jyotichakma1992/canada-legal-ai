@@ -147,8 +147,8 @@ const en: Ui = {
   send: "Ask",
   enterHint: "Enter to ask. Shift+Enter for a new line.",
   examples: "Examples",
-  empty: "No question yet. An example fills the box. It does not send until you press Ask.",
-  filled: "That question is in the box. Change it if you need to, then press Ask.",
+  empty: "An example only fills the box. It does not ask until you press Ask.",
+  filled: "That question is in the box. It has not been asked. Press Ask.",
   areas: "Areas of law",
   areasHint:
     "Federal, provincial, and territorial. These shortcuts fill the box with a starting question. Add what happened, and keep the place you selected.",
@@ -216,8 +216,8 @@ const fr: Ui = {
   enterHint: "Entrée pour demander. Maj+Entrée pour une nouvelle ligne.",
   examples: "Exemples",
   empty:
-    "Pas encore de question. Un exemple remplit la zone. Il n'est pas envoyé tant que vous n'appuyez pas sur Demander.",
-  filled: "Cette question est dans la zone. Modifiez-la au besoin, puis appuyez sur Demander.",
+    "Un exemple remplit seulement la zone. Il ne pose pas la question tant que vous n'appuyez pas sur Demander.",
+  filled: "Cette question est dans la zone. Elle n'a pas été envoyée. Appuyez sur Demander.",
   areas: "Domaines du droit",
   areasHint:
     "Fédéral, provincial et territorial. Ces raccourcis remplissent la zone avec une question de départ. Ajoutez ce qui s'est passé, et gardez l'endroit choisi.",

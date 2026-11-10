@@ -9,7 +9,7 @@ import { useLanguage } from "@/components/language-provider";
 import { TermsArticles } from "@/components/static-pages";
 import { areasFor, examplesFor, questionInLang } from "@/lib/areas";
 import type { Lang } from "@/lib/language";
-import { TERMS_CONSENT_COOKIE, TERMS_CONSENT_VALUE } from "@/lib/terms-consent";
+import { TERMS_CONSENT_COOKIE, TERMS_CONSENT_VALUE, browserHasTermsConsent } from "@/lib/terms-consent";
 import {
   DEFAULT_JURISDICTION,
   JURISDICTIONS,
@@ -78,6 +78,11 @@ export function ChatApp({
     answerLang: Lang,
     seq: number,
   ): Promise<ChatMessage | null> {
+    if (!browserHasTermsConsent()) {
+      setAccepted(false);
+      setLoading(false);
+      return null;
+    }
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -159,7 +164,7 @@ export function ChatApp({
         role: "user" as const,
         content: questionInLang(message.content, lang),
       }));
-    if (users.length === 0) return;
+    if (users.length === 0 || !browserHasTermsConsent()) return;
 
     const seq = ++requestSeq.current;
     const answerLang = lang;
@@ -203,6 +208,10 @@ export function ChatApp({
 
   function sendQuestion(text: string) {
     const question = text.trim();
+    if (!browserHasTermsConsent()) {
+      setAccepted(false);
+      return;
+    }
     if (!accepted || !question || loading) return;
     if (messages.length >= 20) {
       setError("This conversation is too long. Start a new chat to continue.");
@@ -215,6 +224,10 @@ export function ChatApp({
 
   function retry() {
     const last = messages[messages.length - 1];
+    if (!browserHasTermsConsent()) {
+      setAccepted(false);
+      return;
+    }
     if (!last || last.role !== "user" || loading) return;
     void requestAnswer(messages, lang);
   }
@@ -227,10 +240,8 @@ export function ChatApp({
   }
 
   function fillQuestion(text: string) {
-    if (!accepted || loading) return;
+    if (!accepted || !browserHasTermsConsent() || loading) return;
     setDraft(text);
-    inputRef.current?.focus();
-    inputRef.current?.scrollIntoView({ block: "center" });
   }
 
   const canSend = accepted && draft.trim().length > 0 && !loading;
@@ -453,11 +464,13 @@ function TermsGate({ onAgree }: { onAgree: () => void }) {
   const [readToEnd, setReadToEnd] = useState(false);
 
   function markIfRead(el: HTMLDivElement) {
-    if (el.scrollHeight - el.clientHeight <= 12) {
+    if (el.clientHeight < 40) return;
+    const overflow = el.scrollHeight - el.clientHeight;
+    if (overflow <= 12) {
       setReadToEnd(true);
       return;
     }
-    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 12) setReadToEnd(true);
+    if (el.scrollTop > 0 && el.scrollTop + el.clientHeight >= el.scrollHeight - 12) setReadToEnd(true);
   }
 
   useEffect(() => {
