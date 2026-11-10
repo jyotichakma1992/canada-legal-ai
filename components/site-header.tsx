@@ -62,12 +62,12 @@ export function SiteHeader() {
         </div>
         <nav aria-label={t.allOfCanada} className="border-t border-line py-3">
           <p className="text-xs font-semibold tracking-[0.12em] text-navy uppercase">{t.allOfCanada}</p>
-          <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
+          <ul className="mt-2 flex gap-x-4 gap-y-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible">
             {PROVINCE_GUIDES.map((guide) => {
               const href = `/${guide.slug}`;
               const active = pathname === href;
               return (
-                <li key={guide.id}>
+                <li key={guide.id} className="shrink-0">
                   <Link
                     href={href}
                     aria-current={active ? "page" : undefined}

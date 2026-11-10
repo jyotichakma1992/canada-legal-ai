@@ -238,21 +238,22 @@ export function ChatApp({
   const askingDisabled = !accepted || loading;
 
   return (
-    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
+    <div className={`mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 ${accepted ? "" : "pb-40"}`}>
       <div
         className={`grid items-start gap-6 ${messages.length === 0 ? "lg:grid-cols-[minmax(0,1fr)_19rem]" : ""}`}
       >
         {messages.length === 0 ? (
           <div className="order-1 lg:col-start-1 lg:row-start-1">
-            <ProductIntro />
+            <ProductIntro compact={!accepted} />
           </div>
         ) : null}
         {messages.length === 0 ? (
-          <WhyPanel className="order-2 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start" />
+          <WhyPanel className="order-3 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start" />
         ) : null}
         <div
-          className={`flex min-w-0 flex-col gap-6 ${messages.length === 0 ? "order-3 lg:col-start-1 lg:row-start-2" : ""}`}
+          className={`flex min-w-0 flex-col gap-6 ${messages.length === 0 ? "order-2 lg:col-start-1 lg:row-start-2" : ""}`}
         >
+      {accepted ? null : <TermsGate onAgree={agreeToTerms} />}
       <section className="rounded-2xl border border-line bg-white px-5 py-4 shadow-sm" aria-labelledby="province-label">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="w-full sm:max-w-sm">
@@ -392,9 +393,7 @@ export function ChatApp({
         </div>
         <p className="mt-2 text-xs text-muted">{t.enterHint}</p>
       </form>
-      ) : (
-        <TermsGate onAgree={agreeToTerms} />
-      )}
+      ) : null}
 
       {accepted && messages.length === 0 ? (
         <>
@@ -466,6 +465,7 @@ function TermsGate({ onAgree }: { onAgree: () => void }) {
   }, []);
 
   return (
+    <>
     <section className="rounded-2xl border border-line bg-white p-5 shadow-sm sm:p-6" aria-labelledby="terms-gate-heading">
       <h2 id="terms-gate-heading" className="font-serif text-2xl tracking-tight text-navy">
         {t.termsGateTitle}
@@ -475,7 +475,7 @@ function TermsGate({ onAgree }: { onAgree: () => void }) {
         ref={scrollerRef}
         tabIndex={0}
         onScroll={(event) => markIfRead(event.currentTarget)}
-        className="page-prose mt-3 max-h-72 overflow-y-auto rounded-xl border border-line px-4 py-2"
+        className="page-prose mt-3 max-h-48 overflow-y-auto rounded-xl border border-line px-4 py-2 sm:max-h-56"
       >
         <TermsArticles />
       </div>
@@ -487,20 +487,38 @@ function TermsGate({ onAgree }: { onAgree: () => void }) {
           {t.terms}
         </Link>
       </p>
-      <button
-        type="button"
-        disabled={!readToEnd}
-        onClick={onAgree}
-        className="mt-3 inline-flex min-h-12 items-center justify-center rounded-xl bg-cta px-5 py-3 text-left text-base font-semibold text-white transition hover:bg-cta-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-40"
-      >
-        {t.agreeTerms}
-      </button>
     </section>
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-white px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgba(15,23,42,0.08)]">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="hidden text-sm leading-relaxed text-ink sm:block">{readToEnd ? t.agreeReady : t.scrollTerms}</p>
+        <button
+          type="button"
+          disabled={!readToEnd}
+          onClick={onAgree}
+          className={`inline-flex min-h-12 w-full items-center justify-center rounded-xl px-5 py-3 text-left text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:w-auto ${
+            readToEnd
+              ? "bg-cta text-white hover:bg-cta-hover"
+              : "cursor-not-allowed border-2 border-navy bg-white text-navy"
+          }`}
+        >
+          {t.agreeTerms}
+        </button>
+      </div>
+    </div>
+    </>
   );
 }
 
-function ProductIntro() {
+function ProductIntro({ compact = false }: { compact?: boolean }) {
   const { t } = useLanguage();
+  if (compact) {
+    return (
+      <section className="sm:rounded-2xl sm:border sm:border-line sm:bg-white sm:px-6 sm:py-5 sm:shadow-sm">
+        <h1 className="font-serif text-3xl leading-tight tracking-tight text-navy">{t.homeHeading}</h1>
+        <p className="mt-2 hidden max-w-2xl text-base leading-relaxed text-ink sm:block">{t.homeSubtitle}</p>
+      </section>
+    );
+  }
   return (
     <section className="rounded-2xl border border-line bg-white px-6 py-7 shadow-sm sm:px-8 sm:py-9">
       <p className="text-xs font-semibold tracking-[0.14em] text-navy uppercase">{t.forAnyone}</p>

@@ -116,6 +116,7 @@ export type Ui = {
   terms: string;
   termsGateTitle: string;
   scrollTerms: string;
+  agreeReady: string;
   agreeTerms: string;
   privacy: string;
   noscript: string;
@@ -176,7 +177,8 @@ const en: Ui = {
   contact: "Contact",
   terms: "Terms",
   termsGateTitle: "Read and agree before you ask",
-  scrollTerms: "Scroll through the terms to the end. The agree button turns on after that.",
+  scrollTerms: "Scroll through the terms to the end. The button at the bottom of the screen turns on after that.",
+  agreeReady: "You have reached the end of the terms. You can agree now.",
   agreeTerms: "I have read and understood the Terms and Conditions and I agree",
   privacy: "Privacy",
   noscript: "Canada Legal AI needs JavaScript to ask a question.",
@@ -243,7 +245,8 @@ const fr: Ui = {
   terms: "Conditions",
   termsGateTitle: "Lisez et acceptez avant de poser une question",
   scrollTerms:
-    "Faites défiler les conditions jusqu'à la fin. Le bouton d'accord s'active ensuite.",
+    "Faites défiler les conditions jusqu'à la fin. Le bouton en bas de l'écran s'active ensuite.",
+  agreeReady: "Vous êtes arrivé à la fin des conditions. Vous pouvez accepter.",
   agreeTerms: "J'ai lu et compris les conditions et je les accepte",
   privacy: "Confidentialité",
   noscript: "Canada Legal AI a besoin de JavaScript pour poser une question.",
