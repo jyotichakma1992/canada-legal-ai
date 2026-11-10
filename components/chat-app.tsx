@@ -335,6 +335,7 @@ export function ChatApp({
           sendQuestion(draft);
         }}
       >
+        <p className="mb-3 text-sm font-medium leading-relaxed text-navy">{t.agreedNote}</p>
         <p className="mb-3 text-[13px] leading-relaxed text-muted">
           {t.disclaimer}{" "}
           <Link
