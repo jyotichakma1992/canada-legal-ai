@@ -73,6 +73,8 @@ const ERRORS_FR: Record<string, string> = {
   "The AI service could not be reached.": "Le service d'IA n'a pas pu être joint.",
   "The AI request failed before Google returned a status.":
     "La requête d'IA a échoué avant que Google ne renvoie un statut.",
+  "The answer could not be prepared right now. Please try again in a moment.":
+    "La réponse n'a pas pu être préparée pour le moment. Veuillez réessayer dans un instant.",
   "The AI service returned an error that could not be shown.":
     "Le service d'IA a renvoyé une erreur qui ne peut pas être affichée.",
 };

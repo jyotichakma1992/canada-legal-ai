@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 
 import { jurisdictionById } from "@/lib/jurisdictions";
-import { buildSystemPrompt } from "@/lib/prompt";
+import { buildSystemPrompt } from "@/lib/systemPrompt";
 import { placeName } from "@/lib/ui";
 import { allowRequest, clientKey } from "@/lib/rate-limit";
-import type { Lang } from "@/lib/language";
 import { isTermsConsent, TERMS_ACCEPTANCE_HEADER, TERMS_REQUIRED_ERROR } from "@/lib/terms-consent";
 import { parseChatRequest, type ChatMessage } from "@/lib/validate";
 
@@ -75,12 +74,6 @@ function loadApiKey(): { state: "missing" } | { state: "unusable" } | { state: "
   return { state: "ok", value };
 }
 
-function redact(text: string, apiKey?: string): string {
-  let cleaned = text.replace(/AIza[0-9A-Za-z_-]{8,}/g, "[key]");
-  if (apiKey) cleaned = cleaned.split(apiKey).join("[key]");
-  return cleaned.slice(0, 300);
-}
-
 async function readLimitedBody(request: Request): Promise<
   { ok: true; text: string } | { ok: false; reason: "too-large" | "unreadable" }
 > {
@@ -121,18 +114,6 @@ async function readLimitedBody(request: Request): Promise<
   }
 
   return { ok: true, text: new TextDecoder().decode(body) };
-}
-
-function withAnswerLanguage(messages: ChatMessage[], lang: Lang): ChatMessage[] {
-  const note =
-    lang === "fr"
-      ? "Réponds entièrement en français. Tous les titres et toutes les phrases doivent être en français."
-      : "Reply entirely in English. Every heading and every sentence must be in English.";
-  const lastUser = messages.findLastIndex((message) => message.role === "user");
-  if (lastUser < 0) return messages;
-  return messages.map((message, index) =>
-    index === lastUser ? { ...message, content: `${message.content}\n\n${note}` } : message,
-  );
 }
 
 function toGeminiContents(messages: ChatMessage[]) {
@@ -286,21 +267,21 @@ async function callGemini(
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: systemPrompt }] },
         contents: toGeminiContents(messages),
+        generationConfig: {
+          temperature: 0.2,
+          maxOutputTokens: 2048,
+        },
       }),
       signal: AbortSignal.timeout(55_000),
     });
   } catch (error) {
-    console.error(
-      `Gemini ${MODEL} was not sent: ${redact(error instanceof Error ? error.message : "unknown", apiKey)}`,
-    );
+    console.error("Gemini request was not sent.", 0);
     return failureFromThrow(error);
   }
 
   if (!response.ok) {
     const failure = await readFailure(response);
-    console.error(
-      `Gemini ${MODEL} failed: ${failure.status} ${failure.googleStatus} ${failure.reason} ${redact(failure.message, apiKey)}`,
-    );
+    console.error("Gemini request failed.", failure.status);
     return failure;
   }
 
@@ -327,18 +308,12 @@ async function callGemini(
       answer: answer.text.slice(0, 12000),
       ...(answer.thoughtSignature ? { thoughtSignature: answer.thoughtSignature } : {}),
     };
-  } catch (error) {
-    console.error(
-      `Gemini ${MODEL} answer could not be read: ${redact(error instanceof Error ? error.message : "unknown", apiKey)}`,
-    );
+  } catch {
+    console.error("Gemini answer could not be read.", response.status);
     return { ok: false, status: response.status, googleStatus: "", reason: "", message: "" };
   }
 }
 
-
-function safeToken(value: string): string {
-  return /^[A-Za-z0-9_-]{1,40}$/.test(value) ? value : "";
-}
 
 function failureResponse(failure: GeminiFailure) {
   if (failure.reason === "KEY_NOT_SENDABLE") {
@@ -383,13 +358,7 @@ function failureResponse(failure: GeminiFailure) {
     return jsonError(502, "The AI request failed before Google returned a status.");
   }
 
-  const detail = [safeToken(failure.googleStatus), safeToken(failure.reason)].filter(Boolean).join(" ");
-  return jsonError(
-    502,
-    detail
-      ? `Google returned HTTP ${failure.status} ${detail}.`
-      : `Google returned HTTP ${failure.status}.`,
-  );
+  return jsonError(502, "The answer could not be prepared right now. Please try again in a moment.");
 }
 
 export async function POST(request: Request) {
@@ -450,8 +419,11 @@ export async function POST(request: Request) {
   try {
     const result = await callGemini(
       apiKey,
-      buildSystemPrompt(placeName(jurisdiction.id, parsed.value.lang), parsed.value.lang === "fr"),
-      withAnswerLanguage(parsed.value.messages, parsed.value.lang),
+      buildSystemPrompt({
+        province: placeName(jurisdiction.id, parsed.value.lang),
+        language: parsed.value.lang === "fr" ? "French" : "English",
+      }),
+      parsed.value.messages,
     );
 
     if (!result.ok) return failureResponse(result);
@@ -471,7 +443,8 @@ export async function POST(request: Request) {
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
-    console.error(`Gemini request failed: ${redact(error instanceof Error ? error.message : "unknown", apiKey)}`);
-    return failureResponse(failureFromThrow(error));
+    const failure = failureFromThrow(error);
+    console.error("Gemini request failed.", failure.status);
+    return failureResponse(failure);
   }
 }
