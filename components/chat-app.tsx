@@ -6,8 +6,10 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { useLanguage } from "@/components/language-provider";
+import { TermsArticles } from "@/components/static-pages";
 import { areasFor, examplesFor, questionInLang } from "@/lib/areas";
 import type { Lang } from "@/lib/language";
+import { TERMS_CONSENT_COOKIE, TERMS_CONSENT_VALUE } from "@/lib/terms-consent";
 import {
   DEFAULT_JURISDICTION,
   JURISDICTIONS,
@@ -20,8 +22,10 @@ const LEGACY_STORAGE_KEYS = ["canada-legal-ai-chat", "canada-legal-ai-question-c
 
 export function ChatApp({
   initialJurisdiction,
+  initialTermsAccepted = false,
 }: {
   initialJurisdiction?: JurisdictionId;
+  initialTermsAccepted?: boolean;
 }) {
   const { lang, t } = useLanguage();
   const [jurisdiction, setJurisdiction] = useState<JurisdictionId>(
@@ -31,6 +35,7 @@ export function ChatApp({
   const [draft, setDraft] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [accepted, setAccepted] = useState(initialTermsAccepted);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const listId = useId();
@@ -191,9 +196,14 @@ export function ChatApp({
     void rewrite();
   }, [lang]);
 
+  function agreeToTerms() {
+    document.cookie = `${TERMS_CONSENT_COOKIE}=${TERMS_CONSENT_VALUE}; Path=/; Max-Age=31536000; SameSite=Lax`;
+    setAccepted(true);
+  }
+
   function sendQuestion(text: string) {
     const question = text.trim();
-    if (!question || loading) return;
+    if (!accepted || !question || loading) return;
     if (messages.length >= 20) {
       setError("This conversation is too long. Start a new chat to continue.");
       return;
@@ -217,15 +227,15 @@ export function ChatApp({
   }
 
   function fillQuestion(text: string) {
-    if (loading) return;
+    if (!accepted || loading) return;
     setDraft(text);
     inputRef.current?.focus();
     inputRef.current?.scrollIntoView({ block: "center" });
   }
 
-  const canSend = draft.trim().length > 0 && !loading;
-  const canRetry = !loading && messages[messages.length - 1]?.role === "user";
-  const askingDisabled = loading;
+  const canSend = accepted && draft.trim().length > 0 && !loading;
+  const canRetry = accepted && !loading && messages[messages.length - 1]?.role === "user";
+  const askingDisabled = !accepted || loading;
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-5 sm:px-6">
@@ -300,6 +310,7 @@ export function ChatApp({
         )}
       </div>
 
+      {accepted ? (
       <form
         className="mt-5 border-t border-line bg-white pt-4 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
         onSubmit={(event) => {
@@ -365,8 +376,11 @@ export function ChatApp({
         </div>
         <p className="mt-2 text-xs text-muted">{t.enterHint}</p>
       </form>
+      ) : (
+        <TermsGate onAgree={agreeToTerms} />
+      )}
 
-      {messages.length === 0 ? (
+      {accepted && messages.length === 0 ? (
         <>
           <section className="mt-6" aria-labelledby="examples-heading">
             <h2 id="examples-heading" className="text-sm font-semibold text-navy">
@@ -412,6 +426,58 @@ export function ChatApp({
         </>
       ) : null}
     </div>
+  );
+}
+
+function TermsGate({ onAgree }: { onAgree: () => void }) {
+  const { t } = useLanguage();
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const [readToEnd, setReadToEnd] = useState(false);
+
+  function markIfRead(el: HTMLDivElement) {
+    if (el.scrollHeight - el.clientHeight <= 12) {
+      setReadToEnd(true);
+      return;
+    }
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 12) setReadToEnd(true);
+  }
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (el) markIfRead(el);
+  }, []);
+
+  return (
+    <section className="mt-5" aria-labelledby="terms-gate-heading">
+      <h2 id="terms-gate-heading" className="font-serif text-2xl tracking-tight text-navy">
+        {t.termsGateTitle}
+      </h2>
+      <p className="mt-2 text-sm leading-relaxed text-muted">{t.scrollTerms}</p>
+      <div
+        ref={scrollerRef}
+        tabIndex={0}
+        onScroll={(event) => markIfRead(event.currentTarget)}
+        className="page-prose mt-3 max-h-72 overflow-y-auto rounded-xl border border-line px-4 py-2"
+      >
+        <TermsArticles />
+      </div>
+      <p className="mt-3 text-sm">
+        <Link
+          href="/terms"
+          className="text-accent underline underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          {t.terms}
+        </Link>
+      </p>
+      <button
+        type="button"
+        disabled={!readToEnd}
+        onClick={onAgree}
+        className="mt-3 inline-flex min-h-12 items-center justify-center rounded-xl bg-navy px-5 py-3 text-left text-base font-semibold text-white transition hover:bg-[#16345c] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        {t.agreeTerms}
+      </button>
+    </section>
   );
 }
 

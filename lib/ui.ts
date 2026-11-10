@@ -55,6 +55,8 @@ const ERRORS_FR: Record<string, string> = {
   "Choose a province, territory, or Federal / Canada-wide.":
     "Choisissez une province, un territoire ou Fédéral / partout au Canada.",
   "Choose English or French.": "Choisissez le français ou l'anglais.",
+  "Read and agree to the Terms before asking a question.":
+    "Lisez et acceptez les conditions avant de poser une question.",
   "Type a question to continue.": "Écrivez une question pour continuer.",
   "That message could not be read.": "Ce message n'a pas pu être lu.",
   "That message is too long. Try a shorter question.":
@@ -111,6 +113,9 @@ export type Ui = {
   about: string;
   contact: string;
   terms: string;
+  termsGateTitle: string;
+  scrollTerms: string;
+  agreeTerms: string;
   privacy: string;
   noscript: string;
   footerNote: string;
@@ -167,6 +172,9 @@ const en: Ui = {
   about: "About",
   contact: "Contact",
   terms: "Terms",
+  termsGateTitle: "Read and agree before you ask",
+  scrollTerms: "Scroll through the terms to the end. The agree button turns on after that.",
+  agreeTerms: "I have read and understood the Terms and Conditions and I agree",
   privacy: "Privacy",
   noscript: "Canada Legal AI needs JavaScript to ask a question.",
   footerNote:
@@ -228,6 +236,10 @@ const fr: Ui = {
   about: "À propos",
   contact: "Contact",
   terms: "Conditions",
+  termsGateTitle: "Lisez et acceptez avant de poser une question",
+  scrollTerms:
+    "Faites défiler les conditions jusqu'à la fin. Le bouton d'accord s'active ensuite.",
+  agreeTerms: "J'ai lu et compris les conditions et je les accepte",
   privacy: "Confidentialité",
   noscript: "Canada Legal AI a besoin de JavaScript pour poser une question.",
   footerNote:
