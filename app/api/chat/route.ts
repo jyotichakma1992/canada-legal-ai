@@ -76,12 +76,6 @@ function loadApiKey(): { state: "missing" } | { state: "unusable" } | { state: "
   return { state: "ok", value };
 }
 
-function redact(text: string, apiKey?: string): string {
-  let cleaned = text.replace(/AIza[0-9A-Za-z_-]{8,}/g, "[key]");
-  if (apiKey) cleaned = cleaned.split(apiKey).join("[key]");
-  return cleaned.slice(0, 300);
-}
-
 async function readLimitedBody(request: Request): Promise<
   { ok: true; text: string } | { ok: false; reason: "too-large" | "unreadable" }
 > {
@@ -291,17 +285,13 @@ async function callGemini(
       signal: AbortSignal.timeout(55_000),
     });
   } catch (error) {
-    console.error(
-      `Gemini ${MODEL} was not sent: ${redact(error instanceof Error ? error.message : "unknown", apiKey)}`,
-    );
+    console.error("Gemini request was not sent.", 0);
     return failureFromThrow(error);
   }
 
   if (!response.ok) {
     const failure = await readFailure(response);
-    console.error(
-      `Gemini ${MODEL} failed: ${failure.status} ${failure.googleStatus} ${failure.reason} ${redact(failure.message, apiKey)}`,
-    );
+    console.error("Gemini request failed.", failure.status);
     return failure;
   }
 
@@ -328,10 +318,8 @@ async function callGemini(
       answer: answer.text.slice(0, 12000),
       ...(answer.thoughtSignature ? { thoughtSignature: answer.thoughtSignature } : {}),
     };
-  } catch (error) {
-    console.error(
-      `Gemini ${MODEL} answer could not be read: ${redact(error instanceof Error ? error.message : "unknown", apiKey)}`,
-    );
+  } catch {
+    console.error("Gemini answer could not be read.", response.status);
     return { ok: false, status: response.status, googleStatus: "", reason: "", message: "" };
   }
 }
@@ -472,7 +460,8 @@ export async function POST(request: Request) {
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
-    console.error(`Gemini request failed: ${redact(error instanceof Error ? error.message : "unknown", apiKey)}`);
-    return failureResponse(failureFromThrow(error));
+    const failure = failureFromThrow(error);
+    console.error("Gemini request failed.", failure.status);
+    return failureResponse(failure);
   }
 }
