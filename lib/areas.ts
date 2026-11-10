@@ -130,31 +130,36 @@ export const LAW_AREAS: readonly LawArea[] = [
   },
 ] as const;
 
-const EXAMPLE_IDS = ["family", "traffic", "employment", "criminal", "debt"] as const;
+const EXAMPLES = [
+  {
+    en: "What's the difference between a lawyer and a paralegal?",
+    fr: "Quelle est la différence entre un avocat et un parajuriste ?",
+  },
+  {
+    en: "How long do I usually have to take legal action?",
+    fr: "Combien de temps ai-je habituellement pour entreprendre une action en justice ?",
+  },
+  {
+    en: "What is a community legal clinic and how do I find one?",
+    fr: "Qu'est-ce qu'une clinique juridique communautaire et comment puis-je en trouver une ?",
+  },
+] as const;
 
-function questionsFor(areas: readonly LawArea[]): string[] {
-  return EXAMPLE_IDS.map((id) => {
-    const area = areas.find((item) => item.id === id);
-    if (!area) {
-      throw new Error(`Missing example area: ${id}`);
-    }
-    return area.question;
-  });
-}
-
-export const EXAMPLE_QUESTIONS = questionsFor(LAW_AREAS);
+export const EXAMPLE_QUESTIONS = EXAMPLES.map((item) => item.en);
 
 export function areasFor(lang: "en" | "fr"): readonly LawArea[] {
   return lang === "fr" ? LAW_AREAS_FR : LAW_AREAS;
 }
 
 export function examplesFor(lang: "en" | "fr"): string[] {
-  return questionsFor(areasFor(lang));
+  return EXAMPLES.map((item) => (lang === "fr" ? item.fr : item.en));
 }
 
 /** Known example and topic questions have a French and an English version. */
 export function questionInLang(text: string, lang: "en" | "fr"): string {
   const trimmed = text.trim();
+  const example = EXAMPLES.find((item) => item.en === trimmed || item.fr === trimmed);
+  if (example) return lang === "fr" ? example.fr : example.en;
   const source = lang === "fr" ? LAW_AREAS : LAW_AREAS_FR;
   const target = lang === "fr" ? LAW_AREAS_FR : LAW_AREAS;
   const match = source.find((area) => area.question === trimmed);

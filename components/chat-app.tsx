@@ -44,6 +44,7 @@ export function ChatApp({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [accepted, setAccepted] = useState(initialTermsAccepted);
+  const [showFederalHint, setShowFederalHint] = useState(false);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const listId = useId();
@@ -67,6 +68,10 @@ export function ChatApp({
     }
     setAccepted(browserHasTermsConsent());
   }, []);
+
+  useEffect(() => {
+    if (jurisdiction !== "CA") setShowFederalHint(false);
+  }, [jurisdiction]);
 
   useEffect(() => {
     const scroller = scrollerRef.current;
@@ -427,6 +432,7 @@ export function ChatApp({
             <SendIcon />
           </button>
         </div>
+        <p className="mt-2 text-sm leading-relaxed text-ink">{t.personalDetails}</p>
         <p className="mt-2 text-xs text-muted">{t.enterHint}</p>
       </form>
 
@@ -452,17 +458,29 @@ export function ChatApp({
             </div>
           </section>
 
+          <p id="urgent-help" className="rounded-xl border border-line bg-white px-4 py-3 text-sm leading-relaxed text-navy">
+            {t.urgentHelp}
+          </p>
+
           <section aria-labelledby="areas-heading">
             <h2 id="areas-heading" className="font-serif text-2xl tracking-tight text-navy">
               {t.areas}
             </h2>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">{t.areasHint}</p>
-            <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+            {showFederalHint ? (
+              <p id="federal-topic-hint" className="mt-3 max-w-xl text-sm font-medium leading-relaxed text-navy">
+                {t.federalTopicHint}
+              </p>
+            ) : null}
+            <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
               {areas.map((area) => (
                 <li key={area.id}>
                   <button
                     type="button"
-                    onClick={() => fillQuestion(area.question)}
+                    onClick={() => {
+                      fillQuestion(area.question);
+                      if (jurisdiction === "CA") setShowFederalHint(true);
+                    }}
                     disabled={askingDisabled}
                     className="h-full w-full rounded-xl border border-line bg-white px-4 py-3 text-left shadow-sm transition hover:border-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50"
                   >

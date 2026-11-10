@@ -107,6 +107,9 @@ export type Ui = {
   filled: string;
   areas: string;
   areasHint: string;
+  urgentHelp: string;
+  personalDetails: string;
+  federalTopicHint: string;
   whyTitle: string;
   why: readonly { title: string; text: string }[];
   tryAgain: string;
@@ -157,6 +160,11 @@ const en: Ui = {
   areas: "Areas of law",
   areasHint:
     "Federal, provincial, and territorial. These shortcuts fill the box with a starting question. Add what happened, and keep the place you selected.",
+  urgentHelp:
+    "In danger, arrested, or facing a court date or eviction soon? Call 911 in an emergency. Contact legal aid or a lawyer referral service, call 211 for local support, or 9-8-8 if you are in crisis.",
+  personalDetails: "Don't include your name, address, ID numbers or other personal details.",
+  federalTopicHint:
+    "Most of these topics differ by province or territory. Select your province for a more specific answer.",
   whyTitle: "Why people use this",
   why: [
     { title: "Plain English", text: "Answers use everyday words." },
@@ -227,6 +235,12 @@ const fr: Ui = {
   areas: "Domaines du droit",
   areasHint:
     "Fédéral, provincial et territorial. Ces raccourcis remplissent la zone avec une question de départ. Ajoutez ce qui s'est passé, et gardez l'endroit choisi.",
+  urgentHelp:
+    "En danger, arrêté, ou bientôt face à une date d'audience ou à une éviction ? Appelez le 911 en cas d'urgence. Communiquez avec l'aide juridique ou un service de référence à un avocat, appelez le 211 pour du soutien local, ou le 9-8-8 si vous êtes en crise.",
+  personalDetails:
+    "N'indiquez pas votre nom, votre adresse, vos numéros d'identification ni d'autres renseignements personnels.",
+  federalTopicHint:
+    "La plupart de ces sujets diffèrent selon la province ou le territoire. Sélectionnez votre province pour une réponse plus précise.",
   whyTitle: "Pourquoi les gens s'en servent",
   why: [
     { title: "Langage clair", text: "Les réponses utilisent des mots de tous les jours." },
