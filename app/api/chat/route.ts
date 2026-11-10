@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { jurisdictionById } from "@/lib/jurisdictions";
@@ -6,7 +5,7 @@ import { buildSystemPrompt } from "@/lib/prompt";
 import { placeName } from "@/lib/ui";
 import { allowRequest, clientKey } from "@/lib/rate-limit";
 import type { Lang } from "@/lib/language";
-import { isTermsConsent, TERMS_CONSENT_COOKIE } from "@/lib/terms-consent";
+import { isTermsConsent, TERMS_ACCEPTANCE_HEADER, TERMS_REQUIRED_ERROR } from "@/lib/terms-consent";
 import { parseChatRequest, type ChatMessage } from "@/lib/validate";
 
 export const runtime = "nodejs";
@@ -403,9 +402,9 @@ export async function POST(request: Request) {
     );
   }
 
-  const consent = (await cookies()).get(TERMS_CONSENT_COOKIE)?.value;
-  if (!isTermsConsent(consent)) {
-    return jsonError(403, "Read and agree to the Terms before asking a question.");
+  const acceptance = request.headers.get(TERMS_ACCEPTANCE_HEADER);
+  if (!isTermsConsent(acceptance)) {
+    return jsonError(403, TERMS_REQUIRED_ERROR);
   }
 
   const contentType = request.headers.get("content-type")?.split(";")[0]?.trim().toLowerCase();

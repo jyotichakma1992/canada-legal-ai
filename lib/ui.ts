@@ -9,6 +9,7 @@ import {
 } from "@/lib/copy";
 import { jurisdictionById, type JurisdictionId } from "@/lib/jurisdictions";
 import type { Lang } from "@/lib/language";
+import { TERMS_REQUIRED_ERROR } from "@/lib/terms-consent";
 
 const PLACE_FR: Record<JurisdictionId, string> = {
   QC: "Québec",
@@ -57,6 +58,7 @@ const ERRORS_FR: Record<string, string> = {
   "Choose English or French.": "Choisissez le français ou l'anglais.",
   "Read and agree to the Terms before asking a question.":
     "Lisez et acceptez les conditions avant de poser une question.",
+  [TERMS_REQUIRED_ERROR]: "Veuillez d'abord lire et accepter les conditions.",
   "Type a question to continue.": "Écrivez une question pour continuer.",
   "That message could not be read.": "Ce message n'a pas pu être lu.",
   "That message is too long. Try a shorter question.":
@@ -119,6 +121,7 @@ export type Ui = {
   scrollTerms: string;
   agreeReady: string;
   agreeTerms: string;
+  termsFirst: string;
   privacy: string;
   noscript: string;
   footerNote: string;
@@ -182,6 +185,7 @@ const en: Ui = {
   scrollTerms: "Scroll through the terms to the end. The button at the bottom of the screen turns on after that.",
   agreeReady: "You have reached the end of the terms. You can agree now.",
   agreeTerms: "I have read and understood the Terms and Conditions and I agree",
+  termsFirst: "Please read and accept the Terms first",
   privacy: "Privacy",
   noscript: "Canada Legal AI needs JavaScript to ask a question.",
   footerNote:
@@ -252,6 +256,7 @@ const fr: Ui = {
     "Faites défiler les conditions jusqu'à la fin. Le bouton en bas de l'écran s'active ensuite.",
   agreeReady: "Vous êtes arrivé à la fin des conditions. Vous pouvez accepter.",
   agreeTerms: "J'ai lu et compris les conditions et je les accepte",
+  termsFirst: "Veuillez d'abord lire et accepter les conditions.",
   privacy: "Confidentialité",
   noscript: "Canada Legal AI a besoin de JavaScript pour poser une question.",
   footerNote:

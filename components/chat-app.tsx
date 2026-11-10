@@ -9,7 +9,7 @@ import { useLanguage } from "@/components/language-provider";
 import { TermsArticles } from "@/components/static-pages";
 import { areasFor, examplesFor, questionInLang } from "@/lib/areas";
 import type { Lang } from "@/lib/language";
-import { TERMS_CONSENT_COOKIE, TERMS_CONSENT_VALUE, browserHasTermsConsent } from "@/lib/terms-consent";
+import { TERMS_ACCEPTANCE_HEADER, TERMS_STORAGE_KEY, TERMS_VERSION, browserHasTermsConsent } from "@/lib/terms-consent";
 import {
   DEFAULT_JURISDICTION,
   JURISDICTIONS,
@@ -19,6 +19,14 @@ import { placeName, translateError } from "@/lib/ui";
 import type { ChatMessage } from "@/lib/validate";
 
 const LEGACY_STORAGE_KEYS = ["canada-legal-ai-chat", "canada-legal-ai-question-count"];
+
+function acceptanceValue(): string {
+  try {
+    return sessionStorage.getItem(TERMS_STORAGE_KEY) ?? "";
+  } catch {
+    return "";
+  }
+}
 
 export function ChatApp({
   initialJurisdiction,
@@ -53,9 +61,11 @@ export function ChatApp({
       for (const key of LEGACY_STORAGE_KEYS) {
         sessionStorage.removeItem(key);
       }
+      document.cookie = "cla-terms=; Path=/; Max-Age=0; SameSite=Lax";
     } catch {
-      // A locked-down browser can refuse sessionStorage. The chat still works in memory.
+      // A locked-down browser can refuse storage. The chat still works in memory.
     }
+    setAccepted(browserHasTermsConsent());
   }, []);
 
   useEffect(() => {
@@ -85,7 +95,10 @@ export function ChatApp({
     }
     const response = await fetch("/api/chat", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        [TERMS_ACCEPTANCE_HEADER]: acceptanceValue(),
+      },
       body: JSON.stringify({
         jurisdiction: jurisdictionRef.current,
         lang: answerLang,
@@ -202,7 +215,11 @@ export function ChatApp({
   }, [lang]);
 
   function agreeToTerms() {
-    document.cookie = `${TERMS_CONSENT_COOKIE}=${TERMS_CONSENT_VALUE}; Path=/; Max-Age=31536000; SameSite=Lax`;
+    try {
+      sessionStorage.setItem(TERMS_STORAGE_KEY, TERMS_VERSION);
+    } catch {
+      return;
+    }
     setAccepted(true);
   }
 
@@ -249,22 +266,24 @@ export function ChatApp({
   const askingDisabled = !accepted || loading;
 
   return (
-    <div className={`mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 ${accepted ? "" : "pb-40"}`}>
+    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
       <div
         className={`grid items-start gap-6 ${messages.length === 0 ? "lg:grid-cols-[minmax(0,1fr)_19rem]" : ""}`}
       >
+        {accepted ? null : (
+          <div className="order-1 lg:col-span-2">
+            <TermsGate onAgree={agreeToTerms} />
+          </div>
+        )}
         {messages.length === 0 ? (
-          <div className="order-1 lg:col-start-1 lg:row-start-1">
+          <div className="order-2 lg:col-start-1">
             <ProductIntro compact={!accepted} />
           </div>
         ) : null}
         {messages.length === 0 ? (
-          <WhyPanel className="order-3 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start" />
+          <WhyPanel className="order-3 lg:col-start-2 lg:self-start" />
         ) : null}
-        <div
-          className={`flex min-w-0 flex-col gap-6 ${messages.length === 0 ? "order-2 lg:col-start-1 lg:row-start-2" : ""}`}
-        >
-      {accepted ? null : <TermsGate onAgree={agreeToTerms} />}
+        <div className={`order-4 flex min-w-0 flex-col gap-6 ${messages.length === 0 ? "lg:col-start-1" : ""}`}>
       <section className="rounded-2xl border border-line bg-white px-5 py-4 shadow-sm" aria-labelledby="province-label">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="w-full sm:max-w-sm">
@@ -272,16 +291,18 @@ export function ChatApp({
               {t.yourProvince}
             </label>
             <p className="mt-1 text-sm leading-relaxed text-muted">{t.provinceHint}</p>
+            {accepted ? null : <p className="mt-1 text-sm font-medium text-navy">{t.termsFirst}</p>}
             <select
               id="jurisdiction"
               value={jurisdiction}
+              disabled={!accepted}
               onChange={(event) => {
                 const next = event.target.value;
                 if (JURISDICTIONS.some((item) => item.id === next)) {
                   setJurisdiction(next as JurisdictionId);
                 }
               }}
-              className="jurisdiction-select mt-2 h-12 w-full appearance-none rounded-lg border border-line bg-white px-3 pr-10 text-base text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="jurisdiction-select mt-2 h-12 w-full appearance-none rounded-lg border border-line bg-white px-3 pr-10 text-base text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60"
             >
               {JURISDICTIONS.map((item) => (
                 <option key={item.id} value={item.id}>
@@ -338,7 +359,6 @@ export function ChatApp({
         )}
       </div>
 
-      {accepted ? (
       <form
         className="rounded-2xl border border-line bg-white p-5 shadow-sm sm:p-6"
         onSubmit={(event) => {
@@ -346,7 +366,11 @@ export function ChatApp({
           sendQuestion(draft);
         }}
       >
-        <p className="mb-3 text-sm font-medium leading-relaxed text-navy">{t.agreedNote}</p>
+        {accepted ? (
+          <p className="mb-3 text-sm font-medium leading-relaxed text-navy">{t.agreedNote}</p>
+        ) : (
+          <p className="mb-3 text-sm font-medium leading-relaxed text-navy">{t.termsFirst}</p>
+        )}
         <p className="mb-3 text-[13px] leading-relaxed text-muted">
           {t.disclaimer}{" "}
           <Link
@@ -405,7 +429,6 @@ export function ChatApp({
         </div>
         <p className="mt-2 text-xs text-muted">{t.enterHint}</p>
       </form>
-      ) : null}
 
       {accepted && messages.length === 0 ? (
         <>
@@ -479,7 +502,6 @@ function TermsGate({ onAgree }: { onAgree: () => void }) {
   }, []);
 
   return (
-    <>
     <section className="rounded-2xl border border-line bg-white p-5 shadow-sm sm:p-6" aria-labelledby="terms-gate-heading">
       <h2 id="terms-gate-heading" className="font-serif text-2xl tracking-tight text-navy">
         {t.termsGateTitle}
@@ -501,25 +523,20 @@ function TermsGate({ onAgree }: { onAgree: () => void }) {
           {t.terms}
         </Link>
       </p>
+      <button
+        id="agree-terms"
+        type="button"
+        disabled={!readToEnd}
+        onClick={onAgree}
+        className={`mt-4 inline-flex min-h-12 w-full items-center justify-center rounded-xl px-5 py-3 text-center text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+          readToEnd
+            ? "bg-cta text-white hover:bg-cta-hover"
+            : "cursor-not-allowed border-2 border-navy bg-white text-navy"
+        }`}
+      >
+        {t.agreeTerms}
+      </button>
     </section>
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-white px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgba(15,23,42,0.08)]">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="hidden text-sm leading-relaxed text-ink sm:block">{readToEnd ? t.agreeReady : t.scrollTerms}</p>
-        <button
-          type="button"
-          disabled={!readToEnd}
-          onClick={onAgree}
-          className={`inline-flex min-h-12 w-full items-center justify-center rounded-xl px-5 py-3 text-left text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:w-auto ${
-            readToEnd
-              ? "bg-cta text-white hover:bg-cta-hover"
-              : "cursor-not-allowed border-2 border-navy bg-white text-navy"
-          }`}
-        >
-          {t.agreeTerms}
-        </button>
-      </div>
-    </div>
-    </>
   );
 }
 
