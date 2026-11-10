@@ -89,26 +89,68 @@ export function AboutView() {
 }
 
 export function TermsView() {
-  const { lang, t } = useLanguage();
+  const { lang } = useLanguage();
   if (lang === "fr") {
     return (
       <InfoPage
         title="Conditions"
-        lede="Ces conditions décrivent cet outil d'information. Elles ne créent pas de relation avocat-client."
+        lede="En utilisant Canada Legal AI, y compris en posant une question, vous acceptez ces conditions."
       >
-        <h2>Information générale</h2>
-        <p>{t.disclaimer}</p>
+        <h2>1. Aucun avis juridique ni relation avocat-client</h2>
         <p>
-          Les réponses peuvent être incomplètes, périmées ou erronées. Elles ne garantissent pas un
-          résultat devant un tribunal, un résultat devant un organisme décisionnel, ni une décision
-          d'un bureau gouvernemental. Vérifiez les questions importantes auprès d'une personne
-          qualifiée et auprès du texte officiel de la loi.
+          L'information fournie par Canada Legal AI (le « Service ») est produite par un système
+          automatisé d'intelligence artificielle (Google Gemini Flash) et est destinée strictement à
+          des fins générales d'éducation et d'information.
         </p>
-        <h2>Aucune représentation</h2>
+        <ul>
+          <li>
+            <strong>Aucune consultation professionnelle.</strong> Le Service ne fournit pas d'avis
+            juridique, d'opinions juridiques ni de consultation juridique stratégique.
+          </li>
+          <li>
+            <strong>Aucun mandat ni relation.</strong> Votre utilisation du Service, l'envoi de
+            questions ou la réception de réponses ne crée pas de relation avocat-client,
+            parajuriste-client ou fiduciaire entre vous et Canada Legal AI ou ses exploitants.
+          </li>
+          <li>
+            <strong>Pas un substitut.</strong> Le Service ne remplace pas l'avis professionnel d'un
+            avocat ou d'un parajuriste membre d'un ordre dans votre province ou territoire
+            canadien. Ne négligez jamais un avis juridique professionnel et n'en retardez pas la
+            recherche à cause de quelque chose que vous avez lu sur ce site.
+          </li>
+        </ul>
+        <h2>2. Fourniture « tel quel » et limitation de responsabilité</h2>
         <p>
-          Canada Legal AI n'est pas un cabinet d'avocats. Il ne vous représente pas. Utiliser la
-          conversation ne fait de personne votre avocat. L'avertissement sur le site ne supprime
-          aucune responsabilité juridique que vous ou l'exploitant pourriez avoir.
+          Le Service vous est fourni « tel quel » et « selon la disponibilité », sans garantie
+          d'aucune sorte, expresse ou implicite.
+        </p>
+        <ul>
+          <li>
+            <strong>Risque d'erreurs (hallucinations).</strong> Vous reconnaissez que les
+            technologies d'intelligence artificielle sont sujettes aux erreurs, aux bogues
+            logiciels et aux inexactitudes factuelles (souvent appelées « hallucinations »). Le
+            Service ne garantit pas l'exactitude, l'exhaustivité, l'actualité ou l'applicabilité de
+            toute information juridique ou de tout renvoi législatif produit.
+          </li>
+          <li>
+            <strong>Plafond de responsabilité.</strong> Dans toute la mesure permise par les lois
+            fédérales et provinciales canadiennes applicables, Canada Legal AI, ses fondateurs, ses
+            exploitants, ses sociétés affiliées et ses concédants de licence ne seront en aucun cas
+            responsables de dommages directs, indirects, accessoires, spéciaux, consécutifs ou
+            punitifs. Cela comprend, sans s'y limiter, la perte de profits, la perte de données,
+            les sanctions juridiques ou les issues défavorables devant un tribunal qui découlent de
+            votre confiance dans le Service ou qui y sont liées, même si la possibilité de tels
+            dommages a été signalée.
+          </li>
+        </ul>
+        <h2>3. Territoire et indemnisation</h2>
+        <p>
+          Vous acceptez d'indemniser, de défendre et de dégager de toute responsabilité Canada
+          Legal AI et ses exploitants à l'égard de toute réclamation, responsabilité ou perte
+          découlant de votre mauvaise utilisation de la plateforme ou de votre confiance dans ses
+          résultats. Ces conditions sont régies par les lois de la province de votre exploitation
+          et les lois fédérales du Canada qui s'y appliquent, et elles sont interprétées
+          conformément à ces lois.
         </p>
         <h2>Vos questions</h2>
         <p>
@@ -124,20 +166,61 @@ export function TermsView() {
   return (
     <InfoPage
       title="Terms"
-      lede="These terms describe this information tool. They do not create a lawyer-client relationship."
+      lede="By using Canada Legal AI, including by asking a question, you agree to these terms."
     >
-      <h2>General information</h2>
-      <p>{t.disclaimer}</p>
+      <h2>1. No legal advice or lawyer-client relationship</h2>
       <p>
-        Answers can be incomplete, outdated, or wrong. They do not guarantee a court result, a
-        tribunal result, or a decision by a government office. Verify important matters with an
-        appropriately qualified professional and with the official text of the law.
+        The information provided by Canada Legal AI (the &quot;Service&quot;) is generated by an
+        automated artificial intelligence system (Google Gemini Flash) and is intended strictly for
+        general educational and informational purposes.
       </p>
-      <h2>No representation</h2>
+      <ul>
+        <li>
+          <strong>No professional consultation.</strong> The Service does not provide legal advice,
+          legal opinions, or strategic legal consultation.
+        </li>
+        <li>
+          <strong>No retainer or relationship.</strong> Your use of the Service, submission of
+          questions, or receipt of responses does not create a lawyer-client, paralegal-client, or
+          fiduciary relationship between you and Canada Legal AI or its operators.
+        </li>
+        <li>
+          <strong>Not a substitute.</strong> The Service is not a substitute for the professional
+          advice of a licensed lawyer or paralegal in your respective Canadian province or
+          territory. Never disregard professional legal advice or delay seeking it because of
+          something you read on this website.
+        </li>
+      </ul>
+      <h2>2. &quot;As-is&quot; provision and limitation of liability</h2>
       <p>
-        Canada Legal AI is not a law firm. It does not represent you. Using the chat does not make
-        anyone your lawyer. The disclaimer on the site does not remove any legal responsibility you
-        or the operator may have.
+        The Service is provided to you on an &quot;as-is&quot; and &quot;as-available&quot; basis
+        without warranties of any kind, either express or implied.
+      </p>
+      <ul>
+        <li>
+          <strong>Risk of errors (hallucinations).</strong> You acknowledge that artificial
+          intelligence technologies are subject to errors, software bugs, and factual inaccuracies
+          (commonly referred to as &quot;hallucinations&quot;). The Service does not guarantee the
+          accuracy, completeness, currency, or applicability of any legal information or statutory
+          references generated.
+        </li>
+        <li>
+          <strong>Total liability cap.</strong> To the maximum extent permitted by applicable
+          Canadian federal and provincial laws, in no event shall Canada Legal AI, its founders,
+          operators, affiliates, or licensors be liable for any direct, indirect, incidental,
+          special, consequential, or punitive damages. This includes, but is not limited to, loss
+          of profits, loss of data, legal penalties, or adverse court outcomes arising out of or
+          connected to your reliance on the Service, even if advised of the possibility of such
+          damages.
+        </li>
+      </ul>
+      <h2>3. Jurisdiction and indemnification</h2>
+      <p>
+        You agree to indemnify, defend, and hold harmless Canada Legal AI and its operators from
+        any claims, liabilities, or losses arising out of your misuse of the platform or your
+        reliance on its outputs. These Terms shall be governed by and construed in accordance with
+        the laws of the Province of your operation and the federal laws of Canada applicable
+        therein.
       </p>
       <h2>Your questions</h2>
       <p>

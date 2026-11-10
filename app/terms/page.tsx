@@ -9,12 +9,13 @@ export async function generateMetadata(): Promise<Metadata> {
     return {
       title: "Conditions",
       description:
-        "Conditions d'utilisation de Canada Legal AI comme information juridique générale, et non comme un cabinet d'avocats.",
+        "Conditions d'utilisation : information générale seulement, aucune relation avocat-client, et limitation de responsabilité.",
     };
   }
   return {
     title: "Terms",
-    description: "Terms for using Canada Legal AI as general legal information, not as a law firm.",
+    description:
+      "Terms of use: general information only, no lawyer-client relationship, and a limit on liability.",
   };
 }
 

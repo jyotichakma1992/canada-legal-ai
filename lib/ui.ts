@@ -187,7 +187,7 @@ const fr: Ui = {
   provinceHint: "Indiquez où se situe le problème. Les règles fédérales peuvent quand même s'appliquer.",
   newChat: "Nouvelle conversation",
   disclaimer:
-    "Canada Legal AI fournit de l'information juridique produite par une IA à des fins éducatives. Ce n'est pas un cabinet d'avocats et il ne représente pas les utilisateurs. Les réponses peuvent être incomplètes ou inexactes. Ce service ne crée pas de relation avocat-client. Vérifiez les questions juridiques importantes auprès d'une personne qualifiée.",
+    "Les réponses sont produites par un système automatisé (Google Gemini Flash) à des fins d'éducation générale seulement. Ce n'est pas un avis juridique, une opinion juridique ni une consultation, et cela ne crée pas de relation avocat-client, parajuriste-client ou fiduciaire. Les réponses peuvent être erronées. Ce n'est pas un substitut à un avocat ou à un parajuriste membre d'un ordre dans votre province ou territoire. En posant une question, vous acceptez ces conditions.",
   questionHint:
     "Une bonne question indique où cela s'est passé, ce qui s'est passé et ce que vous voulez savoir. N'incluez pas de numéros d'identité ni de documents.",
   sentToGoogle:

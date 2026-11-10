@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -306,7 +307,15 @@ export function ChatApp({
           sendQuestion(draft);
         }}
       >
-        <p className="mb-3 text-[13px] leading-relaxed text-muted">{t.disclaimer}</p>
+        <p className="mb-3 text-[13px] leading-relaxed text-muted">
+          {t.disclaimer}{" "}
+          <Link
+            href="/terms"
+            className="text-accent underline underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            {t.terms}
+          </Link>
+        </p>
         {error ? (
           <div className="mb-3 rounded-lg border border-line bg-mist px-3 py-3" role="alert">
             <p className="text-sm leading-relaxed text-navy">{translateError(error, lang)}</p>
