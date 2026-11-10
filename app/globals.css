@@ -3,12 +3,14 @@
 @theme {
   --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
-  --color-navy: #0c2340;
-  --color-ink: #17233a;
-  --color-accent: #1e4e8c;
-  --color-mist: #f4f7fb;
-  --color-line: #e3e8f0;
-  --color-muted: #4a5a70;
+  --color-navy: #0f172a;
+  --color-ink: #334155;
+  --color-accent: #991b1b;
+  --color-cta: #991b1b;
+  --color-cta-hover: #7f1d1d;
+  --color-mist: #f8fafc;
+  --color-line: #e2e8f0;
+  --color-muted: #475569;
 }
 
 html,
@@ -17,7 +19,7 @@ body {
 }
 
 body {
-  background: #ffffff;
+  background: #f8fafc;
   color: var(--color-ink);
 }
 
@@ -49,7 +51,7 @@ body {
 }
 
 .jurisdiction-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5 10 12.5 15 7.5' stroke='%230c2340' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5 10 12.5 15 7.5' stroke='%230F172A' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.75rem center;
   background-size: 1rem;

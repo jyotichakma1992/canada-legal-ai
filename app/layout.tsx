@@ -58,7 +58,7 @@ export default async function RootLayout({
     <html lang={lang === "fr" ? "fr-CA" : "en-CA"} className={`${sourceSans.variable} ${newsreader.variable}`}>
       <body className="font-sans antialiased">
         <LanguageProvider initialLang={lang}>
-          <div className="flex min-h-dvh flex-col bg-white">
+          <div className="flex min-h-dvh flex-col bg-mist">
             <div className="h-0.5 shrink-0 bg-navy" />
             <SiteHeader />
             <noscript>

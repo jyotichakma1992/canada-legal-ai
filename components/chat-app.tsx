@@ -238,10 +238,22 @@ export function ChatApp({
   const askingDisabled = !accepted || loading;
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-5 sm:px-6">
-      {messages.length === 0 ? <ProductIntro /> : null}
-
-      <section className="mt-5 rounded-xl border border-line bg-mist px-4 py-3" aria-labelledby="province-label">
+    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
+      <div
+        className={`grid items-start gap-6 ${messages.length === 0 ? "lg:grid-cols-[minmax(0,1fr)_19rem]" : ""}`}
+      >
+        {messages.length === 0 ? (
+          <div className="order-1 lg:col-start-1 lg:row-start-1">
+            <ProductIntro />
+          </div>
+        ) : null}
+        {messages.length === 0 ? (
+          <WhyPanel className="order-2 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start" />
+        ) : null}
+        <div
+          className={`flex min-w-0 flex-col gap-6 ${messages.length === 0 ? "order-3 lg:col-start-1 lg:row-start-2" : ""}`}
+        >
+      <section className="rounded-2xl border border-line bg-white px-5 py-4 shadow-sm" aria-labelledby="province-label">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="w-full sm:max-w-sm">
             <label id="province-label" htmlFor="jurisdiction" className="block text-base font-semibold text-navy">
@@ -278,7 +290,7 @@ export function ChatApp({
         </div>
       </section>
 
-      <div id={listId} ref={scrollerRef} aria-live="polite" className={messages.length === 0 ? "" : "mt-8"}>
+      <div id={listId} ref={scrollerRef} aria-live="polite" className={messages.length === 0 ? "hidden" : ""}>
         {messages.length === 0 ? null : (
           <div className="flex flex-col gap-8">
             {messages.map((message, index) =>
@@ -289,8 +301,11 @@ export function ChatApp({
                   </p>
                 </div>
               ) : (
-                <article key={`${message.role}-${index}`} className="max-w-none">
-                  <p className="mb-2 text-sm font-medium text-accent">{t.siteName}</p>
+                <article
+                  key={`${message.role}-${index}`}
+                  className="rounded-2xl border border-line bg-white p-5 shadow-sm sm:p-6"
+                >
+                  <p className="mb-3 font-serif text-lg text-navy">{t.siteName}</p>
                   <div className="legal-answer">
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
@@ -302,6 +317,7 @@ export function ChatApp({
                       {message.content}
                     </ReactMarkdown>
                   </div>
+                  <p className="mt-5 border-t border-line pt-4 text-sm leading-relaxed text-ink">{t.answerNotice}</p>
                 </article>
               ),
             )}
@@ -312,7 +328,7 @@ export function ChatApp({
 
       {accepted ? (
       <form
-        className="mt-5 border-t border-line bg-white pt-4 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+        className="rounded-2xl border border-line bg-white p-5 shadow-sm sm:p-6"
         onSubmit={(event) => {
           event.preventDefault();
           sendQuestion(draft);
@@ -368,7 +384,7 @@ export function ChatApp({
           <button
             type="submit"
             disabled={!canSend}
-            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-navy px-6 text-base font-semibold text-white transition hover:bg-[#16345c] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-40 sm:h-auto sm:min-w-28"
+            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-cta px-6 text-base font-semibold text-white transition hover:bg-cta-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-40 sm:h-auto sm:min-w-28"
           >
             {t.send}
             <SendIcon />
@@ -382,7 +398,7 @@ export function ChatApp({
 
       {accepted && messages.length === 0 ? (
         <>
-          <section className="mt-6" aria-labelledby="examples-heading">
+          <section aria-labelledby="examples-heading">
             <h2 id="examples-heading" className="text-sm font-semibold text-navy">
               {t.examples}
             </h2>
@@ -394,7 +410,7 @@ export function ChatApp({
                   type="button"
                   onClick={() => fillQuestion(question)}
                   disabled={askingDisabled}
-                  className="min-h-11 rounded-full border border-line px-4 py-2 text-left text-sm text-navy transition hover:border-accent hover:bg-mist focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50"
+                  className="min-h-11 rounded-full border border-line bg-white px-4 py-2 text-left text-sm text-navy shadow-sm transition hover:border-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50"
                 >
                   {question}
                 </button>
@@ -402,7 +418,7 @@ export function ChatApp({
             </div>
           </section>
 
-          <section className="mt-8" aria-labelledby="areas-heading">
+          <section aria-labelledby="areas-heading">
             <h2 id="areas-heading" className="font-serif text-2xl tracking-tight text-navy">
               {t.areas}
             </h2>
@@ -414,7 +430,7 @@ export function ChatApp({
                     type="button"
                     onClick={() => fillQuestion(area.question)}
                     disabled={askingDisabled}
-                    className="h-full w-full rounded-lg border border-line px-3 py-3 text-left transition hover:border-accent hover:bg-mist focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50"
+                    className="h-full w-full rounded-xl border border-line bg-white px-4 py-3 text-left shadow-sm transition hover:border-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50"
                   >
                     <span className="block text-sm font-semibold text-navy">{area.label}</span>
                     <span className="mt-1 block text-sm leading-relaxed text-muted">{area.question}</span>
@@ -425,6 +441,8 @@ export function ChatApp({
           </section>
         </>
       ) : null}
+        </div>
+      </div>
     </div>
   );
 }
@@ -448,7 +466,7 @@ function TermsGate({ onAgree }: { onAgree: () => void }) {
   }, []);
 
   return (
-    <section className="mt-5" aria-labelledby="terms-gate-heading">
+    <section className="rounded-2xl border border-line bg-white p-5 shadow-sm sm:p-6" aria-labelledby="terms-gate-heading">
       <h2 id="terms-gate-heading" className="font-serif text-2xl tracking-tight text-navy">
         {t.termsGateTitle}
       </h2>
@@ -473,7 +491,7 @@ function TermsGate({ onAgree }: { onAgree: () => void }) {
         type="button"
         disabled={!readToEnd}
         onClick={onAgree}
-        className="mt-3 inline-flex min-h-12 items-center justify-center rounded-xl bg-navy px-5 py-3 text-left text-base font-semibold text-white transition hover:bg-[#16345c] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-40"
+        className="mt-3 inline-flex min-h-12 items-center justify-center rounded-xl bg-cta px-5 py-3 text-left text-base font-semibold text-white transition hover:bg-cta-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-40"
       >
         {t.agreeTerms}
       </button>
@@ -484,25 +502,31 @@ function TermsGate({ onAgree }: { onAgree: () => void }) {
 function ProductIntro() {
   const { t } = useLanguage();
   return (
-    <section>
-      <p className="text-sm font-medium tracking-wide text-accent">{t.forAnyone}</p>
-      <h1 className="mt-2 max-w-xl font-serif text-[2rem] leading-tight tracking-tight text-navy sm:text-4xl">
+    <section className="rounded-2xl border border-line bg-white px-6 py-7 shadow-sm sm:px-8 sm:py-9">
+      <p className="text-xs font-semibold tracking-[0.14em] text-navy uppercase">{t.forAnyone}</p>
+      <h1 className="mt-3 max-w-2xl font-serif text-[2rem] leading-tight tracking-tight text-navy sm:text-4xl">
         {t.homeHeading}
       </h1>
-      <p className="mt-3 max-w-xl text-base leading-relaxed text-muted">{t.homeSubtitle}</p>
-      <p className="mt-2 max-w-xl text-base leading-relaxed text-ink">{t.audienceLine}</p>
-      <div className="mt-5 border-y border-line py-3">
-        <h2 className="text-sm font-semibold text-navy">{t.whyTitle}</h2>
-        <ul className="mt-3 grid gap-3 sm:grid-cols-4">
-          {t.why.map((item) => (
-            <li key={item.title} className="border-t-2 border-navy pt-2">
-              <p className="text-sm font-semibold text-navy">{item.title}</p>
-              <p className="mt-1 text-sm leading-relaxed text-muted">{item.text}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink">{t.homeSubtitle}</p>
+      <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted">{t.audienceLine}</p>
     </section>
+  );
+}
+
+function WhyPanel({ className = "" }: { className?: string }) {
+  const { t } = useLanguage();
+  return (
+    <aside className={`rounded-2xl border border-line bg-white p-5 shadow-sm ${className}`}>
+      <h2 className="font-serif text-xl tracking-tight text-navy">{t.whyTitle}</h2>
+      <ul className="mt-4 flex flex-col gap-4">
+        {t.why.map((item) => (
+          <li key={item.title} className="border-t border-line pt-4 first:border-t-0 first:pt-0">
+            <p className="text-sm font-semibold text-navy">{item.title}</p>
+            <p className="mt-1 text-sm leading-relaxed text-ink">{item.text}</p>
+          </li>
+        ))}
+      </ul>
+    </aside>
   );
 }
 
