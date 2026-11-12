@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Newsreader, Source_Sans_3 } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 import { LanguageProvider } from "@/components/language-provider";
 import { SiteFooter } from "@/components/site-footer";
@@ -68,6 +69,7 @@ export default async function RootLayout({
             <SiteFooter />
           </div>
         </LanguageProvider>
+        <Analytics />
       </body>
     </html>
   );
